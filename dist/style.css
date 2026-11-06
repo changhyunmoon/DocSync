@@ -7,3 +7,4 @@
 .download-warning{display:block;line-height:1.5;color:#a3483d!important;margin:10px 0 0!important}
 @media(max-width:900px){.workbench-iframe{height:760px}}
 .button:disabled{cursor:default;opacity:.65}.button:disabled:hover{transform:none}
+.install-help{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;line-height:1.6;color:var(--muted)}.install-help>strong{display:block;font-size:13px;color:var(--ink)}.install-help ol{margin:6px 0 0;padding-left:18px}.install-help li{margin-bottom:4px}.install-help b{color:var(--ink)}.download-box .install-help small{display:block;margin:8px 0 0;color:#a3483d}

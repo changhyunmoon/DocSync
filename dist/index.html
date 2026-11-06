@@ -12,7 +12,7 @@
   <header class="site-header">
     <a class="brand" href="#top" aria-label="DocSync 홈"><span class="brand-mark">D</span><span>Doc<span class="brand-blue">Sync</span></span></a>
     <nav aria-label="주요 메뉴"><a href="#how">작동 방식</a><a href="#workspace">웹 데모</a><a href="#desktop">데스크톱 앱</a></nav>
-    <button class="button button-dark desktop-status" type="button" disabled>데스크톱 앱 준비 중</button>
+    <a class="button button-dark" href="#desktop">Windows 앱 다운로드 <span aria-hidden="true">↓</span></a>
   </header>
 
   <main id="top">
@@ -33,7 +33,7 @@
       <div class="shell demo-caption"><span class="caption-dot"></span> 샘플 문서와 변경 내용은 브라우저 메모리에서만 처리됩니다. 새 샘플 시작을 누르면 초기 상태로 돌아갑니다.</div>
     </section>
 
-    <section class="desktop-section shell" id="desktop" data-desktop-status="coming-soon"><div class="desktop-card"><div><span class="overline">DOCSYNC DESKTOP</span><h2>데스크톱 앱은<br>준비 중입니다.</h2><p>더 안정적인 데스크톱 사용 환경을 준비하고 있습니다. 지금은 웹 데모에서 샘플 프로젝트를 체험해 주세요.</p><div class="desktop-meta"><span>Windows용 앱</span><span>출시 준비 중</span></div></div><div class="download-box"><span class="download-icon" aria-hidden="true">…</span><strong>DocSync for Windows</strong><small>다운로드 준비 중</small><button class="button button-blue desktop-status" type="button" disabled>준비 중</button></div></div></section>
+    <section class="desktop-section shell" id="desktop" data-desktop-status="github-release"><div class="desktop-card"><div><span class="overline">WORK ON YOUR OWN DOCS</span><h2>내 프로젝트 문서에 적용하려면<br>데스크톱 앱을 사용하세요.</h2><p>로컬 프로젝트 폴더를 연결하고, 내 API 키로 실제 회의록과 문서를 분석·검토·반영할 수 있습니다. 문서는 사용자 PC에서 관리됩니다.</p><div class="desktop-meta"><span>Windows 10/11 · x64</span><span>설치형 앱</span><span>AI API 사용 시 별도 요금 가능</span></div></div><div class="download-box"><span class="download-icon" aria-hidden="true">↓</span><strong>DocSync for Windows</strong><small>설치 파일 · v0.1.0 · GitHub에서 내려받기</small><a class="button button-blue desktop-release" href="https://github.com/changhyunmoon/DocSync/releases/download/v0.1.0/DocSync-Setup-0.1.0.exe" rel="noopener">설치 파일 다운로드 <span aria-hidden="true">→</span></a><div class="install-help"><strong>설치가 막힐 때</strong><ol><li>브라우저가 다운로드를 막으면 다운로드 목록의 <b>…</b> → <b>유지</b>를 누르세요.</li><li>“Windows의 PC 보호” 창이 뜨면 <b>추가 정보</b> → <b>실행</b>을 누르세요.</li><li>회사 보안 프로그램이 막으면 IT 담당자에게 예외 등록을 요청하세요.</li></ol><small>디지털 서명이 없는 설치 파일이라 Windows가 확인 창을 띄웁니다. GitHub 공식 저장소에서 받은 파일만 실행하세요.</small></div></div></div></section>
   </main>
   <footer class="footer shell"><div class="brand"><span class="brand-mark">D</span><span>Doc<span class="brand-blue">Sync</span></span></div><span>새 결정이 다음 구현의 기준이 되도록.</span></footer>
   <dialog id="source-dialog" class="source-dialog"><div class="dialog-head"><div><span class="overline">SOURCE DOCUMENT</span><h2>예시 회의록 원문</h2></div><button id="source-close" type="button" class="icon-close" aria-label="닫기">×</button></div><pre id="source-text"></pre></dialog>

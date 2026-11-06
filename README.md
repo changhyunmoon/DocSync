@@ -7,7 +7,7 @@
 - 웹 데모 생성·검증·미리보기 스크립트: `scripts/`
 - 개인 명의 Windows 코드 서명 준비·발급·배포: [docs/windows-code-signing.md](docs/windows-code-signing.md)
 
-현재 데스크톱 앱은 **준비 중**으로 표시하며 설치 파일 다운로드를 제공하지 않습니다. 웹 배포에서는 설치 파일과 다운로드 스크립트를 제외합니다. 기존 데스크톱 소스와 서명 도구는 저장소에 보관합니다.
+Windows 설치 파일은 **GitHub Releases**(`v0.1.0`, HTTPS)에서 내려받도록 링크합니다. HTTP인 VM 사이트에서 직접 받으면 브라우저가 "안전하지 않은 다운로드"로 차단하기 때문입니다. 웹 배포에는 설치 파일 조각과 다운로드 스크립트를 넣지 않습니다. 서명이 없는 파일이라 SmartScreen 확인 창이 뜰 수 있어 페이지에 실행 방법을 안내합니다. 새 버전을 낼 때는 Release에 `DocSync-Setup-<버전>.exe`를 올리고 `dist/index.html`의 링크를 바꿉니다.
 
 ## VM 자동 배포
 

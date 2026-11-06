@@ -25,6 +25,18 @@ if (home.includes('data-desktop-status="coming-soon"')) {
     assert.match(button[0], /\bdisabled\b/, 'Coming-soon buttons must be disabled');
   }
   console.log('Web assets verified; desktop download is coming soon.');
+} else if (home.includes('data-desktop-status="github-release"')) {
+  assert.ok(!home.includes('./download.js'), 'GitHub release page must not load the local downloader');
+  if (site !== path.join(project, 'dist')) {
+    await assert.rejects(fs.stat(path.join(site, 'download')), 'GitHub release build must not ship local installer chunks');
+  }
+  const links = [...home.matchAll(/<a\b[^>]*class="[^"]*desktop-release[^"]*"[^>]*href="([^"]+)"/g)].map(match => match[1]);
+  assert.ok(links.length > 0, 'GitHub release page must link to the installer');
+  for (const link of links) {
+    assert.match(link, /^https:\/\/github\.com\/changhyunmoon\/DocSync\/releases\/download\/v[\w.-]+\/DocSync-Setup-[\w.-]+\.exe$/,
+      `Installer must come from this repository's HTTPS release: ${link}`);
+  }
+  console.log('Web assets verified; installer is served from GitHub Releases over HTTPS.');
 } else {
   const manifest = JSON.parse(await fs.readFile(path.join(site, 'download/manifest.json'), 'utf8'));
   const signed = validateInstallerPolicy(manifest);

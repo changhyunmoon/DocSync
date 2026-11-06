@@ -19,12 +19,15 @@ if (path.dirname(build) !== project) throw new Error('Invalid build directory');
 await fs.rm(build, { recursive: true, force: true });
 try {
   const source = path.join(project, 'dist');
-  const desktopComingSoon = (await fs.readFile(path.join(source, 'index.html'), 'utf8')).includes('data-desktop-status="coming-soon"');
+  // coming-soon: no download. github-release: installer is linked from GitHub Releases (HTTPS).
+  // Either way the local installer chunks are not shipped to the VM.
+  const sourceHome = await fs.readFile(path.join(source, 'index.html'), 'utf8');
+  const skipLocalInstaller = /data-desktop-status="(?:coming-soon|github-release)"/.test(sourceHome);
   await fs.cp(source, site, {
     recursive: true,
-    filter: entry => !desktopComingSoon || (entry !== path.join(source, 'download') && entry !== path.join(source, 'download.js'))
+    filter: entry => !skipLocalInstaller || (entry !== path.join(source, 'download') && entry !== path.join(source, 'download.js'))
   });
-  if (!desktopComingSoon) {
+  if (!skipLocalInstaller) {
     const installer = JSON.parse(await fs.readFile(path.join(site, 'download/manifest.json'), 'utf8'));
     const signedInstaller = validateInstallerPolicy(installer);
     const version = installer.filename.match(/^DocSync-Setup-(.+)\.exe$/)[1];
