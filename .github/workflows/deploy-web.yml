@@ -49,7 +49,10 @@ jobs:
           printf '%s\n' "$REVISION" > .web-build/site/health.txt
           tar -czf "$RUNNER_TEMP/docsync-web.tar.gz" -C .web-build/site .
           echo "archive_sha=$(sha256sum "$RUNNER_TEMP/docsync-web.tar.gz" | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
-          signed_installer=$(node -p "Boolean(require('./dist/download/manifest.json').signature)")
+          signed_installer=false
+          if [ -f .web-build/site/download/manifest.json ]; then
+            signed_installer=$(node -p "Boolean(require('./.web-build/site/download/manifest.json').signature)")
+          fi
           echo "signed_installer=$signed_installer" >> "$GITHUB_OUTPUT"
       - name: Transfer web artifact
         id: upload

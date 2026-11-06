@@ -18,18 +18,25 @@ function run(script, args = [], cwd = project) {
 if (path.dirname(build) !== project) throw new Error('Invalid build directory');
 await fs.rm(build, { recursive: true, force: true });
 try {
-  await fs.cp(path.join(project, 'dist'), site, { recursive: true });
-  const installer = JSON.parse(await fs.readFile(path.join(site, 'download/manifest.json'), 'utf8'));
-  const signedInstaller = validateInstallerPolicy(installer);
-  const version = installer.filename.match(/^DocSync-Setup-(.+)\.exe$/)[1];
-  const homePath = path.join(site, 'index.html');
-  let home = (await fs.readFile(homePath, 'utf8')).replace(/(<small data-installer-version>)[^<]*(<\/small>)/,
-    (_, open, close) => `${open}설치 파일 · v${version}${close}`);
-  if (signedInstaller) {
-    home = home.replace(/(<small class="download-warning" data-installer-warning>)[^<]*(<\/small>)/,
-      (_, open, close) => `${open}코드 서명된 설치 파일입니다. Windows의 앱 평판이나 보안 정책에 따라 추가 확인이 나타날 수 있습니다.${close}`);
+  const source = path.join(project, 'dist');
+  const desktopComingSoon = (await fs.readFile(path.join(source, 'index.html'), 'utf8')).includes('data-desktop-status="coming-soon"');
+  await fs.cp(source, site, {
+    recursive: true,
+    filter: entry => !desktopComingSoon || (entry !== path.join(source, 'download') && entry !== path.join(source, 'download.js'))
+  });
+  if (!desktopComingSoon) {
+    const installer = JSON.parse(await fs.readFile(path.join(site, 'download/manifest.json'), 'utf8'));
+    const signedInstaller = validateInstallerPolicy(installer);
+    const version = installer.filename.match(/^DocSync-Setup-(.+)\.exe$/)[1];
+    const homePath = path.join(site, 'index.html');
+    let home = (await fs.readFile(homePath, 'utf8')).replace(/(<small data-installer-version>)[^<]*(<\/small>)/,
+      (_, open, close) => `${open}설치 파일 · v${version}${close}`);
+    if (signedInstaller) {
+      home = home.replace(/(<small class="download-warning" data-installer-warning>)[^<]*(<\/small>)/,
+        (_, open, close) => `${open}코드 서명된 설치 파일입니다. Windows의 앱 평판이나 보안 정책에 따라 추가 확인이 나타날 수 있습니다.${close}`);
+    }
+    await fs.writeFile(homePath, home);
   }
-  await fs.writeFile(homePath, home);
   run(path.join(project, 'desktop/node_modules/vite/bin/vite.js'),
     ['build', '--config', 'vite.web.config.ts'], path.join(project, 'desktop'));
   const app = path.join(site, 'app');

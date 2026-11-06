@@ -6,3 +6,4 @@
 .workbench-iframe{display:block;width:100%;height:780px;border:0;background:#fff}
 .download-warning{display:block;line-height:1.5;color:#a3483d!important;margin:10px 0 0!important}
 @media(max-width:900px){.workbench-iframe{height:760px}}
+.button:disabled{cursor:default;opacity:.65}.button:disabled:hover{transform:none}
