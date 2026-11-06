@@ -27,6 +27,8 @@ npm run typecheck
 
 ## 설치 파일 만들기
 
+다른 사용자에게 배포할 서명된 Windows 설치 파일은 [코드 서명 가이드](../docs/windows-code-signing.md)에 따라 인증서 발급·설치 후 `npm run dist:win:signed`로 만듭니다. 아래 `dist:win`은 개발용이며, 새로 만든 서명 없는 파일은 웹 배포 검증에서 거부됩니다.
+
 ```bash
 npm run dist:win   # Windows → release/DocSync Setup x.y.z.exe
 npm run dist:mac   # macOS → release/DocSync-x.y.z.dmg (macOS에서 실행)

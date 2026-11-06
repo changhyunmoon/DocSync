@@ -11,3 +11,7 @@ scripts/.demo-bundle.cjs
 !.env.example
 .web-build/
 .deploy-local/
+*.pfx
+*.p12
+*.key
+*.pem
