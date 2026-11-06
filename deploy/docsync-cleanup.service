@@ -1,0 +1,14 @@
+[Unit]
+Description=Remove expired DocSync deployment and runner files
+
+[Service]
+Type=oneshot
+User=docsync-runner
+Group=docsync-runner
+ExecStart=/usr/bin/python3 /opt/docsync/cleanup.py
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/docsync/runner /srv/docsync
+LogNamespace=docsync

@@ -1,0 +1,36 @@
+{
+    admin off
+    auto_https off
+    persist_config off
+    log default {
+        output file /var/log/docsync/runtime.json {
+            roll_size 10MiB
+            roll_keep 3
+            roll_keep_for 168h
+        }
+    }
+}
+
+:8088 {
+    root * /srv/docsync/current
+    encode zstd gzip
+    header {
+        -Server
+        X-Content-Type-Options nosniff
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+    @mutable not path /app/assets/*
+    header @mutable Cache-Control "no-store"
+    @hashed path /app/assets/*
+    header @hashed Cache-Control "public, max-age=31536000, immutable"
+    @hidden path /.git* /.env* /.*
+    respond @hidden 404
+    file_server
+    log {
+        output file /var/log/docsync/access.json {
+            roll_size 10MiB
+            roll_keep 3
+            roll_keep_for 168h
+        }
+    }
+}

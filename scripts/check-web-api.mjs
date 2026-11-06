@@ -5,9 +5,10 @@ import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const demo=JSON.parse(await fs.readFile(path.join(root,'dist/demo-data.json'),'utf8'));
+const site=process.argv[2]?path.resolve(process.argv[2]):path.join(root,'dist');
+const demo=JSON.parse(await fs.readFile(path.join(site,'demo-data.json'),'utf8'));
 const window={confirm:()=>true};
-const source=await fs.readFile(path.join(root,'dist/app/web-api.js'),'utf8');
+const source=await fs.readFile(path.join(site,'app/web-api.js'),'utf8');
 vm.runInNewContext(source,{window,fetch:async()=>({ok:true,json:async()=>demo}),structuredClone,setTimeout,console});
 const api=window.api;
 let state=await api.getState();

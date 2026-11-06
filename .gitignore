@@ -9,3 +9,5 @@ scripts/.demo-bundle.cjs
 .env
 .env.*
 !.env.example
+.web-build/
+.deploy-local/

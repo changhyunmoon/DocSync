@@ -6,6 +6,21 @@
 - 공개 웹 데모와 Windows 설치 파일: `dist/`
 - 웹 데모 생성·검증·미리보기 스크립트: `scripts/`
 
+## VM 자동 배포
+
+- 웹 주소: http://10.1.19.178:8088
+- `main`에 push하면 GitHub Actions가 웹을 빌드·검증하고 VM에 자동 배포합니다.
+- 배포 상태: [Deploy DocSync web](https://github.com/changhyunmoon/DocSync/actions/workflows/deploy-web.yml)
+- 서버 분리, 파일 보관, 복구 및 관리 방법: [deploy/README.md](deploy/README.md)
+
+웹만 다시 빌드하려면 Node.js 22에서 아래를 실행합니다. 결과는 `.web-build/site/`에 생성되며 기존 `dist/`는 수정하지 않습니다.
+
+```powershell
+$env:ELECTRON_SKIP_BINARY_DOWNLOAD='1'
+npm ci --prefix desktop --no-audit --no-fund
+node scripts/build-web.mjs
+```
+
 ## 공개 웹 데모
 
 DocSync 데스크톱 앱의 MarketFlow 테스트 모드를 브라우저에서 체험하는 정적 사이트입니다. 화면은 데스크톱 앱의 렌더러 빌드를 사용하고, `dist/app/web-api.js`가 테스트 모드의 IPC 동작을 브라우저 메모리에서 제공합니다. 예시 회의록과 10개 Markdown 문서는 데스크톱 앱의 `src/shared/demo.ts`, `src/main/mock.ts`에서 생성합니다.

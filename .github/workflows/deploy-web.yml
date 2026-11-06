@@ -1,0 +1,117 @@
+name: Deploy DocSync web
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docsync-web-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+      archive_sha: ${{ steps.package.outputs.archive_sha }}
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+      - name: Install locked dependencies
+        run: npm ci --prefix desktop --no-audit --no-fund
+      - name: Typecheck and unit tests
+        working-directory: desktop
+        run: |
+          npm run typecheck
+          npm test
+      - name: Build and verify the web site
+        run: |
+          node scripts/build-web.mjs
+          python3 deploy/test-deploy.py
+      - name: Package web files only
+        id: package
+        env:
+          REVISION: ${{ github.sha }}
+        run: |
+          printf '%s\n' "$REVISION" > .web-build/site/health.txt
+          tar -czf "$RUNNER_TEMP/docsync-web.tar.gz" -C .web-build/site .
+          echo "archive_sha=$(sha256sum "$RUNNER_TEMP/docsync-web.tar.gz" | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+      - name: Transfer web artifact
+        id: upload
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: docsync-web-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/docsync-web.tar.gz
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+
+  deploy:
+    # No PR events, no checkout, no build and no repository scripts run on the VM.
+    # Only main from this repository can reach the dedicated deployment runner.
+    if: github.repository == 'changhyunmoon/DocSync' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: [self-hosted, Linux, X64, docsync-web]
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: read
+    environment:
+      name: production
+      url: http://10.1.19.178:8088
+    steps:
+      - name: Create a temporary transfer directory
+        shell: bash
+        run: |
+          directory=$(mktemp -d "$RUNNER_TEMP/docsync-deploy.XXXXXX")
+          echo "DOCSYNC_TRANSFER=$directory" >> "$GITHUB_ENV"
+      - name: Download the verified build
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: docsync-web-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.DOCSYNC_TRANSFER }}
+      - name: Activate and health-check the release
+        shell: bash
+        env:
+          ARCHIVE_SHA: ${{ needs.build.outputs.archive_sha }}
+          RELEASE_ID: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          printf '%s  %s\n' "$ARCHIVE_SHA" "$DOCSYNC_TRANSFER/docsync-web.tar.gz" | sha256sum -c -
+          python3 /opt/docsync/deploy-release.py "$DOCSYNC_TRANSFER/docsync-web.tar.gz" "$RELEASE_ID"
+      - name: Remove the temporary transfer
+        if: always()
+        shell: bash
+        run: |
+          case "${DOCSYNC_TRANSFER:-}" in
+            "$RUNNER_TEMP"/docsync-deploy.*) rm -rf -- "$DOCSYNC_TRANSFER" ;;
+          esac
+
+  cleanup-artifact:
+    if: always() && needs.build.outputs.artifact_id != ''
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+    steps:
+      - name: Delete the transfer artifact after deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ needs.build.outputs.artifact_id }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          curl --fail-with-body --silent --show-error --retry 3 \
+            -X DELETE -H "Authorization: Bearer $GH_TOKEN" \
+            -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$REPOSITORY/actions/artifacts/$ARTIFACT_ID"

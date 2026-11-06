@@ -1,0 +1,11 @@
+[Unit]
+Description=Hourly cleanup of DocSync files only
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=1h
+RandomizedDelaySec=5min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

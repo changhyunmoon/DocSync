@@ -1,0 +1,37 @@
+[Unit]
+Description=GitHub Actions runner for changhyunmoon/DocSync only
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=docsync-runner
+Group=docsync-runner
+WorkingDirectory=/opt/docsync/runner
+ExecStart=/opt/docsync/runner/runsvc.sh
+Environment=HOME=/var/lib/docsync-runner
+Environment=ACTIONS_RUNNER_HOOK_JOB_COMPLETED=/opt/docsync/hooks/job-completed.sh
+Restart=always
+RestartSec=5
+KillMode=process
+KillSignal=SIGTERM
+TimeoutStopSec=300
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/docsync/runner /srv/docsync /var/lib/docsync-runner
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+SocketBindDeny=any
+MemoryMax=1G
+CPUQuota=100%
+TasksMax=256
+LogNamespace=docsync
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,37 @@
+[Unit]
+Description=DocSync static web server (port 8088)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=docsync-web
+Group=docsync-web
+ExecStart=/opt/docsync/bin/caddy run --config /etc/docsync/Caddyfile --adapter caddyfile
+Restart=on-failure
+RestartSec=3
+Environment=HOME=/var/lib/docsync-web
+Environment=XDG_DATA_HOME=/var/lib/docsync-web/data
+Environment=XDG_CONFIG_HOME=/var/lib/docsync-web/config
+StateDirectory=docsync-web
+StateDirectoryMode=0700
+LogsDirectory=docsync
+LogsDirectoryMode=0750
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+MemoryMax=256M
+CPUQuota=100%
+TasksMax=128
+LogNamespace=docsync
+
+[Install]
+WantedBy=multi-user.target
