@@ -1,0 +1,11 @@
+desktop/node_modules
+desktop/out
+desktop/release*
+scripts/.demo-bundle.cjs
+*.log
+.DS_Store
+.idea/
+.openai/
+.env
+.env.*
+!.env.example

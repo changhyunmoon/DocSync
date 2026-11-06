@@ -1,0 +1,27 @@
+{
+  "filename": "DocSync-Setup-0.1.0.exe",
+  "size": 95117132,
+  "sha256": "755a8a21f0eb2bb5611c48b85b847e64eb212360b9a231dc25f571b809214011",
+  "parts": [
+    {
+      "name": "docsync-setup.part01.bin",
+      "size": 20971520
+    },
+    {
+      "name": "docsync-setup.part02.bin",
+      "size": 20971520
+    },
+    {
+      "name": "docsync-setup.part03.bin",
+      "size": 20971520
+    },
+    {
+      "name": "docsync-setup.part04.bin",
+      "size": 20971520
+    },
+    {
+      "name": "docsync-setup.part05.bin",
+      "size": 11231052
+    }
+  ]
+}
